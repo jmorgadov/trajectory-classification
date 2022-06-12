@@ -1,35 +1,30 @@
+"""
+This contains necessary functions to handle the data.
+"""
 import json
-import logging
 from pathlib import Path
-from typing import List, NamedTuple, Tuple
+from typing import List
 
 import numpy as np
 
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    datefmt="%H:%M:%S",
-)
 
-def load_trajs(metadata_file: Path) -> List[dict]:
-    metadata = []
-    trajs = []
-    with open(metadata_file, 'r') as md:
-        logging.info("Loading metadata")
-        metadata = json.loads(md.read())
-    for i, traj_md in enumerate(metadata):
-        logging.info(
-            "Processing trajectory: %s - %s", traj_md['id'], f"{(i + 1) / len(metadata):.2%}"
-        )
-        trajs.append({'id': traj_md['id'],
-                      'traj_data': np.loadtxt(traj_md['file_path']),
-                      'class': traj_md['class']})
-    return trajs
+def load_trajs_data(metadata_file: Path) -> List[dict]:
+    """
+    Loads all the data from the metadata file.
 
-def main():
-    metadata_file = Path("trajectories/metadata.json")
-    trajs = load_trajs(metadata_file)
-    logging.info("Done")
+    Parameters
+    ----------
+    metadata_file : Path
+        Path to the metadata file.
 
-if __name__ == "__main__":
-    main()
+    Returns
+    -------
+    List[dict]
+        The data and metadata of each trajectory.
+    """
+    with open(metadata_file, "r", encoding="utf-8") as md_file:
+        metadata: List[dict] = json.load(md_file)
+
+    for traj_md in metadata:
+        traj_md["traj_data"] = np.loadtxt(traj_md["file_path"])
+    return metadata
