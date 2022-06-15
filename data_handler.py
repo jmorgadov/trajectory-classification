@@ -60,14 +60,10 @@ def get_selected_data() -> List[dict]:
     metadata = load_trajs_metadata(metadata_file)
     classes = {"car", "taxi", "bus", "walk", "bike", "subway", "train"}
     data = [traj_md for traj_md in metadata if traj_md["class"] in classes]
-    data = load_trajs_data(data)
     final_data = []
     for traj_md in data:
         # Filter trajs: dt <= 3s and len >= 100
-        if (
-            np.mean(np.diff(traj_md["traj_data"][:, 2])) > 3
-            or traj_md["traj_data"].shape[0] < 100
-        ):
+        if traj_md["mean_dt"] > 3 or traj_md["length"] < 100:
             continue
 
         # Join similar classes
@@ -76,4 +72,5 @@ def get_selected_data() -> List[dict]:
         if traj_md["class"] == "subway":
             traj_md["class"] = "train"
         final_data.append(traj_md)
+    final_data = load_trajs_data(final_data)
     return final_data

@@ -70,13 +70,20 @@ def process_usr_trajs(usr_folder: Path) -> None:
 
         # Register outside label bounds
         elif label.start_dt < reg_dt:
-            # Save the trajectory if it is not empty
-            if traj:
+            # Save the trajectory if it has at least 2 points
+            if len(traj) > 1:
                 traj_id = f"{usr_folder.name}_{label_idx}"
                 file_path = str(dest_folder / f"{label_idx}_{label.clsf}.txt")
-                np.savetxt(file_path, np.array(traj))
+                npy_traj = np.array(traj)
+                np.savetxt(file_path, npy_traj)
                 metadata.append(
-                    {"id": traj_id, "file_path": file_path, "class": label.clsf}
+                    {
+                        "id": traj_id,
+                        "file_path": file_path,
+                        "class": label.clsf,
+                        "mean_dt": np.mean(np.diff(npy_traj[:, 2])),
+                        "length": len(traj),
+                    }
                 )
                 traj = []
 
