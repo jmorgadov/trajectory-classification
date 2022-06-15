@@ -3,73 +3,75 @@ Contains all the functions to estimate the features of a given trajectory.
 """
 
 import numpy as np
-from scipy import stats as st
+from numpy.linalg import norm
+
+
+def delta_r(traj: np.ndarray):
+    return norm(np.diff(traj[:, :2], axis=0), axis=0)
+
+
+def delta_t(traj: np.ndarray):
+    return np.diff(traj[:, 2], axis=0)
+
 
 def distance(traj: np.ndarray):
-    return np.sum(np.linalg.norm(np.diff(traj[:,:2], axis=0), axis=0))
+    return np.sum(delta_r(traj))
 
 
 def velocity(traj: np.ndarray):
-    return np.linalg.norm(np.diff(traj[:,:2], axis=0), axis=0) / np.diff(traj[:, 2], axis=0)
+    return delta_r(traj) / delta_t(traj)
 
 
-def _velocity_rate(traj : np.ndarray):
+def _velocity_rate(traj: np.ndarray):
     vel = velocity(traj)
-    return np.linalg.norm(vel[1:] - vel[:-1], axis=0) / vel[:-1]
+    return norm(vel[1:] - vel[:-1], axis=0) / vel[:-1]
 
 
-def vel_change_rate(traj:np.ndarray, threashold: float):
+def vel_change_rate(traj: np.ndarray, threashold: float):
     v_rate = _velocity_rate(traj)
-    return np.sum(i > threashold for i in v_rate)/distance(traj)
+    return np.sum(v_rate > threashold) / distance(traj)
 
 
 def stop_rate(traj: np.ndarray, threashold: float):
     vel = velocity(traj)
-    return np.sum(i > threashold for i in vel)/distance(traj)
+    return np.sum(vel < threashold) / distance(traj)
 
 
-def time_difference(traj):
-    return np.linalg.norm(np.diff(traj[:,2], axis=0), axis=0)
-
-
-def aceleration(traj: np.ndarray):
+def acceleration(traj: np.ndarray):
     vel = velocity(traj)
-    time_diff = time_difference(traj)
-    return np.array(i/j for i,j in (vel,time_diff))
+    _delta_t = delta_t(traj)
+    return np.diff(vel) / _delta_t[:-1]
 
 
-def aceleration_change_rate(traj: np.ndarray):
-    aceler = aceleration(traj)
-    time_diff = time_difference(traj)
-    return np.array(i/j for i,j in (aceler,time_diff))
+def acceleration_change_rate(traj: np.ndarray):
+    acc = acceleration(traj)
+    _delta_t = delta_t(traj)
+    return np.diff(acc) / _delta_t[:-2]
 
 
 def angle(traj: np.ndarray):
-    dif = np.diff(traj[:,:2], axis=0)
-    return np.arctan(i/j for i,j in (dif[0], dif[1]))
+    delta_y = np.diff(traj[:, 1])
+    delta_x = np.diff(traj[:, 0])
+    return np.arctan(delta_y / delta_x)
 
 
 def turning_angle(traj: np.ndarray):
-    ang = angle(traj)
-    return ang[1:] - ang[:-1]
+    return np.diff(angle(traj))
 
 
 def heading_change_rate(traj: np.ndarray):
     t_angle = turning_angle(traj)
-    time_dif = time_difference(traj)
-    return np.array(i/j for i,j in (t_angle, time_dif))
+    _delta_t = delta_t(traj)
+    return t_angle / _delta_t
 
 
 def rate_HCR(traj: np.ndarray):
     hcr = heading_change_rate(traj)
-    time_dif = time_difference(traj)
-    return np.array(i/j for i,j in (hcr, time_dif))
+    _delta_t = delta_t(traj)
+    return hcr / _delta_t[:-1]
 
 
 # General features
-
-def mode(values: np.ndarray):
-    return st.mode(values)
 
 
 def mean(values: np.ndarray):
@@ -80,11 +82,11 @@ def median(values: np.ndarray):
     return np.median(values)
 
 
-def min(values: np.ndarray):
+def min_val(values: np.ndarray):
     return np.min(values)
 
 
-def max(values: np.ndarray):
+def max_val(values: np.ndarray):
     return np.max(values)
 
 
@@ -97,7 +99,7 @@ def variance(values: np.ndarray):
 
 
 def coef_var(values: np.ndarray):
-    return standard_dev(values)/abs(mean(values))
+    return standard_dev(values) / np.abs(mean(values))
 
 
 def percentile(values: np.ndarray, percent_value: int):
