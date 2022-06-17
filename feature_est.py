@@ -23,7 +23,7 @@ def delta_r(traj: FloatArray) -> FloatArray:
     FloatArray
         Position difference between two consecutive points.
     """
-    return norm(np.diff(traj[:, :2], axis=0), axis=0)
+    return norm(np.diff(traj[:, :2], axis=0), axis=1)
 
 
 def delta_t(traj: FloatArray) -> FloatArray:
@@ -80,7 +80,7 @@ def velocity(traj: FloatArray) -> FloatArray:
 
 def _velocity_rate(traj: FloatArray) -> FloatArray:
     vel = velocity(traj)
-    return norm(vel[1:] - vel[:-1], axis=0) / vel[:-1]
+    return np.abs(vel[1:] - vel[:-1]) / vel[:-1]
 
 
 def vel_change_rate(traj: FloatArray, threashold: float) -> float:
@@ -135,7 +135,7 @@ def acceleration(traj: FloatArray) -> FloatArray:
     """
     vel = velocity(traj)
     _delta_t = delta_t(traj)
-    return np.diff(vel) / _delta_t[:-1]
+    return np.diff(vel) / _delta_t[1:]
 
 
 def acceleration_change_rate(traj: FloatArray) -> FloatArray:
@@ -154,7 +154,7 @@ def acceleration_change_rate(traj: FloatArray) -> FloatArray:
     """
     acc = acceleration(traj)
     _delta_t = delta_t(traj)
-    return np.diff(acc) / _delta_t[:-2]
+    return np.diff(acc) / _delta_t[2:]
 
 
 def angle(traj: FloatArray) -> FloatArray:
@@ -173,7 +173,7 @@ def angle(traj: FloatArray) -> FloatArray:
     """
     delta_y = np.diff(traj[:, 1])
     delta_x = np.diff(traj[:, 0])
-    return np.arctan(delta_y / delta_x)
+    return np.arctan2(delta_y, delta_x)
 
 
 def turning_angle(traj: FloatArray) -> FloatArray:
@@ -209,7 +209,7 @@ def heading_change_rate(traj: FloatArray) -> FloatArray:
     """
     t_angle = turning_angle(traj)
     _delta_t = delta_t(traj)
-    return t_angle / _delta_t
+    return t_angle / _delta_t[1:]
 
 
 def rate_hcr(traj: FloatArray) -> FloatArray:
@@ -228,7 +228,7 @@ def rate_hcr(traj: FloatArray) -> FloatArray:
     """
     hcr = heading_change_rate(traj)
     _delta_t = delta_t(traj)
-    return hcr / _delta_t[:-1]
+    return np.diff(hcr) / _delta_t[2:]
 
 
 # General features
