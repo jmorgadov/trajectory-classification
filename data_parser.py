@@ -59,14 +59,16 @@ def process_usr_trajs(usr_folder: Path) -> None:
     label_idx = 0
     regs_idx = 0
     label = labels[label_idx]
-    traj = []
+    traj: List[List[float]] = []
     while regs_idx < len(all_regs):
         print(f"{(regs_idx + 1) / len(all_regs):.2%}", end="\r")
         lat, long, reg_dt = all_regs[regs_idx]
 
         # Register inside label bounds
         if label.start_dt <= reg_dt <= label.end_dt:
-            traj.append([lat, long, (reg_dt - label.start_dt).seconds])
+            time = (reg_dt - label.start_dt).seconds
+            if time != traj[-1][-1]:
+                traj.append([lat, long, time])
 
         # Register outside label bounds
         elif label.start_dt < reg_dt:
