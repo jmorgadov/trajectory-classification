@@ -1,44 +1,18 @@
 from typing import List
+
 import numpy as np
-import numpy.typing as npt
-from data_handler import load_trajs_metadata, load_trajs_data
+
 import feature_est as fe
-
-FloatArray = npt.NDArray[np.float64]
-
-
-def data_selection() -> List[dict]:
-    metadata = load_trajs_metadata("trajectories/metadata.json")
-
-    classes = {"car", "taxi", "run", "bus", "walk", "bike", "subway", "train"}
-    data = [traj_md for traj_md in metadata if traj_md["class"] in classes]
-    for traj_md in data:
-        if traj_md["class"] == "taxi":
-            traj_md["class"] = "car"
-        if traj_md["class"] == "subway":
-            traj_md["class"] = "train"
-    classes.remove("taxi")
-    classes.remove("subway")
-
-    data = [traj_md for traj_md in data if traj_md["class"] != "run"]
-
-    data = [tmd for tmd in data if tmd["mean_dt"] <= 3 and tmd["length"] >= 100]
-
-    data = load_trajs_data(data)
-
-    return data
-
-
-da = data_selection()
+from data_handler import get_selected_data
 
 
 def convert_traj_into_vector(traj: np.ndarray, threashold: float) -> np.ndarray:
-    vel: FloatArray = fe.velocity(traj)
-    acc: FloatArray = fe.acceleration(traj)
-    acc_chg_rate: FloatArray = fe.acceleration_change_rate(traj)
-    ang: FloatArray = fe.angle(traj)
-    trng_ang: FloatArray = fe.turning_angle(traj)
-    hding_chg_rate: FloatArray = fe.heading_change_rate(traj)
+    vel = fe.velocity(traj)
+    acc = fe.acceleration(traj)
+    acc_chg_rate = fe.acceleration_change_rate(traj)
+    ang = fe.angle(traj)
+    trng_ang = fe.turning_angle(traj)
+    hding_chg_rate = fe.heading_change_rate(traj)
     traj_vect = np.array(
         [
             # Distance
@@ -107,7 +81,7 @@ def convert_traj_into_vector(traj: np.ndarray, threashold: float) -> np.ndarray:
     return traj_vect
 
 
-def convert_data_into_array(data: List[dict]):
+def get_feat_vectors(data: List[dict]):
     vectors = []
 
     for d in data:
@@ -115,9 +89,10 @@ def convert_data_into_array(data: List[dict]):
         traj_vect = convert_traj_into_vector(traj, 1)
         vectors.append(traj_vect)
 
-    return traj_vect
+    return vectors
 
 
-f = convert_data_into_array(da)
-print(f)
-print(f[0])
+metadata = get_selected_data()
+feat_vectors = get_feat_vectors(metadata)
+print(feat_vectors)
+print(feat_vectors[0])
