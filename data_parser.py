@@ -67,7 +67,7 @@ def process_usr_trajs(usr_folder: Path) -> None:
         # Register inside label bounds
         if label.start_dt <= reg_dt <= label.end_dt:
             time = (reg_dt - label.start_dt).seconds
-            if time != traj[-1][-1]:
+            if not traj or time != traj[-1][-1]:
                 traj.append([lat, long, time])
 
         # Register outside label bounds
