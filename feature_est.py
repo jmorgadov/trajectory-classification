@@ -80,7 +80,9 @@ def velocity(traj: FloatArray) -> FloatArray:
 
 def _velocity_rate(traj: FloatArray) -> FloatArray:
     vel = velocity(traj)
-    return np.abs(vel[1:] - vel[:-1]) / vel[:-1]
+    subs = np.abs(vel[1:] - vel[:-1])
+    vel[vel == 0] = np.inf
+    return subs / vel[:-1]
 
 
 def vel_change_rate(traj: FloatArray, threashold: float) -> float:
@@ -350,7 +352,8 @@ def coef_var(values: FloatArray) -> float:
     float
         Coefficient of variation.
     """
-    return standard_dev(values) / np.abs(mean(values))
+    m = np.abs(mean(values))
+    return standard_dev(values) / m if m != 0 else 0.
 
 
 def percentile(values: FloatArray, percent_value: float) -> float:
