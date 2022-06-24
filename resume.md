@@ -37,7 +37,8 @@ The final vector of features for each trajectory contains 51 elements.
 
 #### Unsupervised algorithms
 
-We tried unsupervised models like: K-means, DBSCAN and OPTICS  
+We tried unsupervised models like: K-means, DBSCAN and OPTICS. For this models
+we calculated how many different classes where in each cluster.
 
 ## Using raw data
 
@@ -50,6 +51,10 @@ An LSTM model was created for the classification. The model structure is:
 | Bidirectional LSTM (32 units) | 
 | Dense (15 units, relu activation) |
 | Dense (5 or 3 units, softmax activation) |
+
+We notice that the classes: car, bus and train where the most confusing ones to
+classify for the algorithm, so we leaved only the class car of the aforementioned.
+(Thta's why the final Dense layer has 5 of 3 units).
 
 ### Results
 

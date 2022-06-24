@@ -158,6 +158,7 @@ def get_feat_vectors(data: List[dict]) -> Tuple[list, list, list]:
     clss_mask = []
     clss = []
     length = len(data)
+    classes = {n:i for i, n in enumerate(set(md["class"] for md in data))}
     for i,d in enumerate(data):
         print(f"{(i+1)/length:.2%}", end="\r")
         traj = d["traj_data"]
