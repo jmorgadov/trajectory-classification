@@ -22,7 +22,7 @@ standard deviation, interquartile ranges, etc.
 
 The final vector of features for each trajectory contains 51 elements.
 
-Below the results for each model is shown:
+### Results
 
 | Algorithm									| Accuracy	|
 | :--										|	   --:	|
@@ -35,6 +35,31 @@ Below the results for each model is shown:
 | Random Forest (Standar Scaler)  			|    89.55% |
 | Random Forest (PCA with 15 components)  	|    80.39% |
 
-
 ## Using raw data
 
+An LSTM model was created for the classification. The model structure is:
+
+| Layers |
+| :-- | 
+| LSTM (128 units with return sequence) |
+| LSTM (64 units with return sequence) |
+| Bidirectional LSTM (32 units) | 
+| Dense (15 units, relu activation) |
+| Dense (5 or 3 units, softmax activation) |
+
+### Results
+
+| Classes						| Test Accuracy |
+| :--							| :--			|
+| bike, car, bus, train, walk	| 47.16%		|
+| **bike, car, walk**			| **60.60%**	|
+
+## Final observations
+
+As we can see the supervised algorithms using the features had the best results,
+being 90.04% the max accuracy achieved.
+
+## Recommendations
+
+It is recommended for future investigations to analyze the LSTM model in depth and
+also try the classification using a transformer.
