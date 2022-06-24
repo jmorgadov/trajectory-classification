@@ -38,7 +38,13 @@ The final vector of features for each trajectory contains 51 elements.
 #### Unsupervised algorithms
 
 We tried unsupervised models like: K-means, DBSCAN and OPTICS. For this models
-we calculated how many different classes where in each cluster.
+we calculated how many different classes where in each cluster and some metrics.
+
+We tested the models with different setups (different parameters) but they
+didn't show good results. The best clusterization was from the OPTICS (taking
+only the classes car, walk and bike) model but the metrics showed that the data
+has too many outliers (few trajectories per cluster) and all the clusters where
+too close (negative silhouette -0.45).
 
 ## Using raw data
 
@@ -63,7 +69,7 @@ classify for the algorithm, so we leaved only the class car of the aforementione
 | bike, car, bus, train, walk	| 47.16%		|
 | **bike, car, walk**			| **60.60%**	|
 
-## Final observations
+## Conclusions
 
 As we can see the supervised algorithms using the features had the best results,
 being **90.04%** the max accuracy achieved.
