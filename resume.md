@@ -24,7 +24,7 @@ The final vector of features for each trajectory contains 51 elements.
 
 ### Results
 
-| Algorithm									| Accuracy	|
+| Model 									| Accuracy	|
 | :--										|	   --:	|
 | KNN										|    70.54%	|
 | SVM (Polinomial Kernel)					|    71.14% |
@@ -32,8 +32,12 @@ The final vector of features for each trajectory contains 51 elements.
 | SVM (RBF Kernel)							|    83.68% |
 | Decision Tree							    |	 83.08% |
 | **Random Forest**							|**90.04%** |
-| Random Forest (Standar Scaler)  			|    89.55% |
+| Random Forest (Standard Scaler)  			|    89.55% |
 | Random Forest (PCA with 15 components)  	|    80.39% |
+
+#### Unsupervised algorithms
+
+We tried unsupervised models like: K-means, DBSCAN and OPTICS  
 
 ## Using raw data
 
@@ -57,7 +61,7 @@ An LSTM model was created for the classification. The model structure is:
 ## Final observations
 
 As we can see the supervised algorithms using the features had the best results,
-being 90.04% the max accuracy achieved.
+being **90.04%** the max accuracy achieved.
 
 ## Recommendations
 
