@@ -11,6 +11,60 @@ classes = {'walk': 0,
            'bus': 3,
            'bike': 4}
 
+feat_name = [
+    'distance',
+    'mean_velocity',
+    'median_velocity',
+    'min_velocity',
+    'max_velocity',
+    'std_velocity',
+    'var_velocity',
+    'coef_var_velocity',
+    'iqr_velocity',
+    'velocity_change_rate',
+    'stop_rate',
+    'mean_acceleration',
+    'median_acceleration',
+    'min_acceleration',
+    'max_acceleration',
+    'std_acceleration',
+    'var_acceleration',
+    'coef_var_acceleration',
+    'iqr_acceleration',
+    'mean_acc_change_rate',
+    'median_acc_change_rate',
+    'min_acc_change_rate',
+    'max_acc_change_rate',
+    'std_acc_change_rate',
+    'var_acc_change_rate',
+    'coef_var_acc_change_rate',
+    'iqr_acc_change_rate',
+    'mean_angle',
+    'median_angle',
+    'min_angle',
+    'max_angle',
+    'std_angle',
+    'var_angle',
+    'coef_var_angle',
+    'iqr_angle',
+    'mean_turning_angle',
+    'median_turning_angle',
+    'min_turning_angle',
+    'max_turning_angle',
+    'std_turning_angle',
+    'var_turning_angle',
+    'coef_var_turning_angle',
+    'iqr_turning_angle',
+    'mean_heading_change_rate',
+    'median_heading_change_rate',
+    'min_heading_change_rate',
+    'max_heading_change_rate',
+    'std_heading_change_rate',
+    'var_heading_change_rate',
+    'coef_var_heading_change_rate',
+    'iqr_heading_change_rate',
+]
+
 def convert_traj_into_vector(traj: np.ndarray, threashold: float) -> np.ndarray:
     vel = fe.velocity(traj)
     acc = fe.acceleration(traj)
@@ -103,8 +157,9 @@ def get_feat_vectors(data: List[dict]) -> Tuple[list, list, list]:
     vectors = []
     clss_mask = []
     clss = []
-
-    for d in data:
+    length = len(data)
+    for i,d in enumerate(data):
+        print(f"{(i+1)/length:.2%}", end="\r")
         traj = d["traj_data"]
         traj_vect = convert_traj_into_vector(traj, 1)
         vectors.append(traj_vect)
